@@ -69,7 +69,6 @@ fn from_raw<'a>(
     let variant_consts = variants.clone().map(|name| {
         quote! {
             // const blocks, please.
-            #[allow(non_snake_case)]
             const #name: u128 = #enum_name::#name as u128;
         }
     });
@@ -80,6 +79,7 @@ fn from_raw<'a>(
     });
     quote! {
         #[inline]
+        #[allow(non_upper_case_globals)]
         unsafe fn from_raw(__v: u128) -> Self {
             #(#variant_consts)*
             match __v {
