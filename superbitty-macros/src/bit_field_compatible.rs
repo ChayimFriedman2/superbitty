@@ -24,12 +24,15 @@ pub(crate) fn bit_field_compatible(item: TokenStream) -> syn::Result<TokenStream
 
     let discriminants_mask = discriminants_mask(&enum_.variants)?;
     let shift = if discriminants_mask == 0 {
-        0 // Using 128 will panic in debug mode
+        0 // Using 128 will panic in debug mode.
     } else {
         discriminants_mask.trailing_zeros()
     };
-    let bits_len =
-        u128::BITS - discriminants_mask.trailing_zeros() - discriminants_mask.leading_zeros();
+    let bits_len = if discriminants_mask == 0 {
+        0 // Both leading and trailing zero are 128, subtracting will overflow.
+    } else {
+        u128::BITS - discriminants_mask.trailing_zeros() - discriminants_mask.leading_zeros()
+    };
 
     let from_raw = from_raw(&item.ident, enum_.variants.iter().map(|variant| &variant.ident));
 
