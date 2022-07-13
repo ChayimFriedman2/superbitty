@@ -7,3 +7,7 @@ edition = "2021"
 
 [dependencies]
 superbitty-macros = { path = "../superbitty-macros" }
+
+[dev-dependencies]
+rustversion = "1.0.7"
+trybuild = "1.0.63"

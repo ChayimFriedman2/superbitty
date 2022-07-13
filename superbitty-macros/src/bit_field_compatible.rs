@@ -1,5 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
+use syn::spanned::Spanned;
 
 use crate::utils::SynErrors;
 
@@ -129,16 +130,17 @@ fn discriminants_mask(
 }
 
 fn discriminant_value_or_err(discriminant: &syn::Expr) -> syn::Result<u128> {
+    let span = discriminant.span();
     let (discriminant, is_negative) = discriminant_value(discriminant)?;
     if is_negative {
-        return Err(syn::Error::new_spanned(
-            discriminant,
+        return Err(syn::Error::new(
+            span,
             "negative discriminants are not supported with `BitFieldCompatible`",
         ));
     }
     let discriminant = discriminant.ok_or_else(|| {
-        syn::Error::new_spanned(
-            discriminant,
+        syn::Error::new(
+            span,
             "complex expressions in the discriminant are not supported with `BitFieldCompatible` (only integers)",
         )
     })?;
