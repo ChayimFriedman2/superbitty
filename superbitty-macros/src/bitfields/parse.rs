@@ -34,6 +34,7 @@ impl Parse for BitfieldsStruct {
             input.parse::<kw::construct>()?;
             input.parse::<Token![=]>()?;
             let vis = input.parse()?;
+            input.parse::<Token![fn]>()?;
             let name = input.parse()?;
             let args;
             let parens = parenthesized!(args in input);
