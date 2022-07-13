@@ -1,6 +1,8 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 
+use crate::utils::SynErrors;
+
 pub(crate) fn bit_field_compatible(item: TokenStream) -> syn::Result<TokenStream> {
     let item = syn::parse2::<syn::DeriveInput>(item)?;
     let enum_ = match &item.data {
@@ -93,16 +95,23 @@ fn discriminants_mask(
     // Thus, we only default to zero at the end.
     let mut discriminants_mask = 0;
     let mut prev_discriminant = None;
+    let mut errors = SynErrors::default();
     for variant in variants {
         if !matches!(variant.fields, syn::Fields::Unit) {
-            return Err(syn::Error::new_spanned(
+            errors.push(syn::Error::new_spanned(
                 &variant.fields,
                 "cannot have payload with `BitFieldCompatible`",
             ));
         }
 
         let discriminant = match &variant.discriminant {
-            Some((_, discriminant)) => discriminant_value_or_err(discriminant)?,
+            Some((_, discriminant)) => match discriminant_value_or_err(discriminant) {
+                Ok(discriminant) => discriminant,
+                Err(err) => {
+                    errors.push(err);
+                    0
+                }
+            },
             None => match prev_discriminant {
                 Some(prev_value) => prev_value + 1,
                 None => 0,
@@ -112,6 +121,7 @@ fn discriminants_mask(
         discriminants_mask |= discriminant;
         prev_discriminant = Some(discriminant);
     }
+    errors.into_result()?;
     Ok(discriminants_mask)
 }
 
