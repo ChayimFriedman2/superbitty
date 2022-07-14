@@ -14,7 +14,7 @@ keywords = ["bitfields"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-superbitty-macros = { path = "../superbitty-macros" }
+superbitty-macros = "0.1.0"
 
 [dev-dependencies]
 rustversion = "1.0.7"
