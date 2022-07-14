@@ -1,0 +1,23 @@
+error: unknown derive in `bitfields!`. Refer to the documentation for the list of supported derives
+ --> tests/ui/bitfields/unknown_derive.rs:4:14
+  |
+4 |     #[derive(Foo, serde::Serialize)]
+  |              ^^^
+
+error: unknown derive in `bitfields!`. Refer to the documentation for the list of supported derives
+ --> tests/ui/bitfields/unknown_derive.rs:4:19
+  |
+4 |     #[derive(Foo, serde::Serialize)]
+  |                   ^^^^^^^^^^^^^^^^
+
+error: unknown derive in `bitfields!`. Refer to the documentation for the list of supported derives
+ --> tests/ui/bitfields/unknown_derive.rs:5:14
+  |
+5 |     #[derive(serde::Deserialize, Debug)]
+  |              ^^^^^^^^^^^^^^^^^^
+
+error: unknown derive in `bitfields!`. Refer to the documentation for the list of supported derives
+ --> tests/ui/bitfields/unknown_derive.rs:6:14
+  |
+6 |     #[derive(BitFieldCompatible)]
+  |              ^^^^^^^^^^^^^^^^^^

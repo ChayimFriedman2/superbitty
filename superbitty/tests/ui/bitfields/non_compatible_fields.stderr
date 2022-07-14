@@ -1,0 +1,101 @@
+error[E0277]: the trait bound `FieldA: BitFieldCompatible` is not satisfied
+   --> tests/ui/bitfields/non_compatible_fields.rs:14:12
+    |
+14  |         a: FieldA,
+    |            ^^^^^^ the trait `BitFieldCompatible` is not implemented for `FieldA`
+    |
+    = help: the trait `BitFieldCompatible` is implemented for `CompatibleField`
+note: required by a bound in `assert_bitfield_compatible`
+   --> src/lib.rs
+    |
+    |     pub const fn assert_bitfield_compatible<T: super::BitFieldCompatible>() {}
+    |                                                ^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `assert_bitfield_compatible`
+
+error[E0277]: the trait bound `FieldB: BitFieldCompatible` is not satisfied
+   --> tests/ui/bitfields/non_compatible_fields.rs:16:12
+    |
+16  |         b: FieldB,
+    |            ^^^^^^ the trait `BitFieldCompatible` is not implemented for `FieldB`
+    |
+    = help: the trait `BitFieldCompatible` is implemented for `CompatibleField`
+note: required by a bound in `assert_bitfield_compatible`
+   --> src/lib.rs
+    |
+    |     pub const fn assert_bitfield_compatible<T: super::BitFieldCompatible>() {}
+    |                                                ^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `assert_bitfield_compatible`
+
+error[E0277]: the trait bound `FieldA: BitFieldCompatible` is not satisfied
+  --> tests/ui/bitfields/non_compatible_fields.rs:12:1
+   |
+12 | / bitfields! {
+13 | |     struct NonCompatibleFields : u8 {
+14 | |         a: FieldA,
+15 | |         compatible: CompatibleField,
+16 | |         b: FieldB,
+17 | |     }
+18 | | }
+   | |_^ the trait `BitFieldCompatible` is not implemented for `FieldA`
+   |
+   = help: the trait `BitFieldCompatible` is implemented for `CompatibleField`
+   = note: this error originates in the macro `bitfields` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `FieldB: BitFieldCompatible` is not satisfied
+  --> tests/ui/bitfields/non_compatible_fields.rs:12:1
+   |
+12 | / bitfields! {
+13 | |     struct NonCompatibleFields : u8 {
+14 | |         a: FieldA,
+15 | |         compatible: CompatibleField,
+16 | |         b: FieldB,
+17 | |     }
+18 | | }
+   | |_^ the trait `BitFieldCompatible` is not implemented for `FieldB`
+   |
+   = help: the trait `BitFieldCompatible` is implemented for `CompatibleField`
+   = note: this error originates in the macro `bitfields` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `FieldA: BitFieldCompatible` is not satisfied
+  --> tests/ui/bitfields/non_compatible_fields.rs:14:9
+   |
+12 | / bitfields! {
+13 | |     struct NonCompatibleFields : u8 {
+14 | |         a: FieldA,
+   | |         ^ the trait `BitFieldCompatible` is not implemented for `FieldA`
+15 | |         compatible: CompatibleField,
+16 | |         b: FieldB,
+17 | |     }
+18 | | }
+   | |_- required by a bound introduced by this call
+   |
+   = help: the trait `BitFieldCompatible` is implemented for `CompatibleField`
+
+error[E0277]: the trait bound `FieldB: BitFieldCompatible` is not satisfied
+  --> tests/ui/bitfields/non_compatible_fields.rs:16:9
+   |
+12 | / bitfields! {
+13 | |     struct NonCompatibleFields : u8 {
+14 | |         a: FieldA,
+15 | |         compatible: CompatibleField,
+16 | |         b: FieldB,
+   | |         ^ the trait `BitFieldCompatible` is not implemented for `FieldB`
+17 | |     }
+18 | | }
+   | |_- required by a bound introduced by this call
+   |
+   = help: the trait `BitFieldCompatible` is implemented for `CompatibleField`
+
+error[E0277]: the trait bound `FieldA: BitFieldCompatible` is not satisfied
+  --> tests/ui/bitfields/non_compatible_fields.rs:14:9
+   |
+14 |         a: FieldA,
+   |         ^ the trait `BitFieldCompatible` is not implemented for `FieldA`
+   |
+   = help: the trait `BitFieldCompatible` is implemented for `CompatibleField`
+
+error[E0277]: the trait bound `FieldB: BitFieldCompatible` is not satisfied
+  --> tests/ui/bitfields/non_compatible_fields.rs:16:9
+   |
+16 |         b: FieldB,
+   |         ^ the trait `BitFieldCompatible` is not implemented for `FieldB`
+   |
+   = help: the trait `BitFieldCompatible` is implemented for `CompatibleField`

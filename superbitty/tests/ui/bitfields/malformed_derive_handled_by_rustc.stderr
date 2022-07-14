@@ -1,0 +1,22 @@
+error: malformed `derive` attribute input
+ --> tests/ui/bitfields/malformed_derive_handled_by_rustc.rs:7:5
+  |
+7 |     #[derive]
+  |     ^^^^^^^^^ help: must be of the form: `#[derive(Trait1, Trait2, ...)]`
+
+error: malformed `derive` attribute input
+ --> tests/ui/bitfields/malformed_derive_handled_by_rustc.rs:8:5
+  |
+8 |     #[derive = ""]
+  |     ^^^^^^^^^^^^^^ help: must be of the form: `#[derive(Trait1, Trait2, ...)]`
+
+error: wrong meta list delimiters
+ --> tests/ui/bitfields/malformed_derive_handled_by_rustc.rs:9:13
+  |
+9 |     #[derive[Debug]]
+  |             ^^^^^^^
+  |
+help: the delimiters should be `(` and `)`
+  |
+9 |     #[derive(Debug)]
+  |             ~     ~
