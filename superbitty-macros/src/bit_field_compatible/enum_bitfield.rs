@@ -4,7 +4,7 @@ use syn::spanned::Spanned;
 
 use crate::utils::SynErrors;
 
-pub(crate) fn enum_bitfield(item: syn::DeriveInput) -> Result<TokenStream, syn::Error> {
+pub(crate) fn enum_bitfield(item: syn::DeriveInput) -> syn::Result<TokenStream> {
     let enum_ = match &item.data {
         syn::Data::Enum(enum_) => enum_,
         _ => unreachable!(),
