@@ -95,10 +95,10 @@ mod derive_fns {
         impl_trait! {span=>
             impl PartialEq for #item {
                 #[inline]
-                fn eq(&self, other: &Self) -> bool {
+                fn eq(&self, _other: &Self) -> bool {
                     true #(
                         && ::superbitty::__helpers::PartialEq::eq(
-                            &self.#field_names(), &other.#field_names(),
+                            &self.#field_names(), &_other.#field_names(),
                         )
                     )*
                 }
@@ -117,10 +117,10 @@ mod derive_fns {
         impl_trait! {span=>
             impl PartialOrd for #item {
                 #[inline]
-                fn partial_cmp(&self, other: &Self) -> ::superbitty::__helpers::PartialCmpResult {
+                fn partial_cmp(&self, _other: &Self) -> ::superbitty::__helpers::PartialCmpResult {
                     #(
                         match ::superbitty::__helpers::PartialOrd::partial_cmp(
-                            &self.#field_names(), &other.#field_names(),
+                            &self.#field_names(), &_other.#field_names(),
                         ) {
                             ::superbitty::__helpers::SOME_EQ => {}
                             cmp => return cmp,
@@ -137,11 +137,11 @@ mod derive_fns {
         impl_trait! {span=>
             impl Ord for #item {
                 #[inline]
-                fn cmp(&self, other: &Self) -> ::superbitty::__helpers::Ordering {
+                fn cmp(&self, _other: &Self) -> ::superbitty::__helpers::Ordering {
                     ::superbitty::__helpers::Ordering::Equal #(
                         .then_with(|| {
                             ::superbitty::__helpers::Ord::cmp(
-                                &self.#field_names(), &other.#field_names(),
+                                &self.#field_names(), &_other.#field_names(),
                             )
                         })
                     )*
@@ -155,14 +155,14 @@ mod derive_fns {
         impl_trait! {span=>
             impl Hash for #item {
                 #[inline]
-                fn hash<H>(&self, state: &mut H)
+                fn hash<H>(&self, _state: &mut H)
                 where
                     H: ::superbitty::__helpers::Hasher,
                 {
                     #(
                         ::superbitty::__helpers::Hash::hash(
                             &self.#field_names(),
-                            state,
+                            _state,
                         );
                     )*
                 }
