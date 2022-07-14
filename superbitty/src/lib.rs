@@ -99,7 +99,9 @@ pub unsafe trait BitFieldCompatible: Copy {
     /// [`into_raw()`] and truncate the bits left after applying this value (that is,
     /// perform the operation `into_raw(v) & (((1 << BITS_LEN) - 1) << SHIFT)`),
     /// it is okay to call [`from_raw()`] with the resulted value and this will give back
-    /// the original value.
+    /// the original value. The last is not a safety requirement: if the value is different
+    /// no UB will occur but the value you'll get from storing this type in a bitfield may
+    /// be wrong.
     ///
     /// [`into_raw()`]: BitFieldCompatible::into_raw
     /// [`from_raw()`]: BitFieldCompatible::from_raw
