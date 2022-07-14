@@ -1,0 +1,11 @@
+error: duplicate option
+ --> tests/ui/BitFieldCompatible/structs/duplicate_options.rs:4:35
+  |
+4 | #[bit_field(offset = 0, size = 1, size = 2, offset = 3)]
+  |                                   ^^^^^^^^
+
+error: duplicate option
+ --> tests/ui/BitFieldCompatible/structs/duplicate_options.rs:4:45
+  |
+4 | #[bit_field(offset = 0, size = 1, size = 2, offset = 3)]
+  |                                             ^^^^^^^^^^

@@ -1,0 +1,11 @@
+error: only primitive unsigned integers are supported as raw type with `#[derive(BitFieldCompatible)]`
+ --> tests/ui/BitFieldCompatible/structs/invalid_raw_type.rs:5:28
+  |
+5 | struct InvalidRawTypeTuple(());
+  |                            ^^
+
+error: only primitive unsigned integers are supported as raw type with `#[derive(BitFieldCompatible)]`
+  --> tests/ui/BitFieldCompatible/structs/invalid_raw_type.rs:10:10
+   |
+10 |     raw: i32,
+   |          ^^^

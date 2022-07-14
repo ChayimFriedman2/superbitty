@@ -1,0 +1,7 @@
+error: there must be an attribute `#[bit_field(size = …, [offset = …])]` to denote the bitfield range
+ --> tests/ui/BitFieldCompatible/structs/no_options.rs:3:10
+  |
+3 | #[derive(BitFieldCompatible)]
+  |          ^^^^^^^^^^^^^^^^^^
+  |
+  = note: this error originates in the derive macro `BitFieldCompatible` (in Nightly builds, run with -Z macro-backtrace for more info)

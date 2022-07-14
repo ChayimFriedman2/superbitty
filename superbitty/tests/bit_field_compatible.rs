@@ -39,6 +39,10 @@ enum BigOne {
     A = 0b1111111,
 }
 
+#[derive(BitFieldCompatible, Clone, Copy)]
+#[bit_field(size = 1, offset = 1)]
+struct AStruct(u8);
+
 #[test]
 fn test() {
     assert_values::<OneZeroVariantEnum>(0, 0, 0);
@@ -46,4 +50,6 @@ fn test() {
     assert_values::<Scattered>(2, 12, 0b00111111111111);
     assert_values::<Dense>(2, 6, 0b00111111);
     assert_values::<BigOne>(0, 7, 0b1111111);
+
+    assert_values::<AStruct>(1, 1, 0b1);
 }

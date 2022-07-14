@@ -1,0 +1,11 @@
+error: unions cannot `#[derive(BitFieldCompatible)]`
+ --> tests/ui/BitFieldCompatible/union.rs:4:1
+  |
+4 | union Bar {}
+  | ^^^^^^^^^^^^
+
+error: unions cannot have zero fields
+ --> tests/ui/BitFieldCompatible/union.rs:4:1
+  |
+4 | union Bar {}
+  | ^^^^^^^^^^^^

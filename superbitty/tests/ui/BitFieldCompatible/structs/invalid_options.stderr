@@ -1,0 +1,11 @@
+error: unknown option, expected `size` or `offset`
+ --> tests/ui/BitFieldCompatible/structs/invalid_options.rs:4:23
+  |
+4 | #[bit_field(size = 0, foo = 123, bar = "456")]
+  |                       ^^^^^^^^^
+
+error: malformed option, expected `name = <int_value>`
+ --> tests/ui/BitFieldCompatible/structs/invalid_options.rs:4:34
+  |
+4 | #[bit_field(size = 0, foo = 123, bar = "456")]
+  |                                  ^^^^^^^^^^^

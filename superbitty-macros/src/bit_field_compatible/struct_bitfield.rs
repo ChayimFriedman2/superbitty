@@ -26,7 +26,7 @@ pub(crate) fn struct_bitfield(item: syn::DeriveInput) -> syn::Result<TokenStream
             const BITS_LEN: u32 = #size;
 
             #[inline]
-            fn into_raw(self) -> u128 { self.#raw_field }
+            fn into_raw(self) -> u128 { self.#raw_field as u128 }
             #[inline]
             unsafe fn from_raw(v: u128) -> Self {
                 Self { #raw_field: v as _ }
@@ -84,7 +84,7 @@ fn raw_field(fields: &syn::Fields) -> syn::Result<TokenStream> {
     Ok(field_name)
 }
 
-fn bitfield_properties(attrs: &[syn::Attribute]) -> syn::Result<(u128, u128)> {
+fn bitfield_properties(attrs: &[syn::Attribute]) -> syn::Result<(u32, u32)> {
     let attr = attrs.iter().find(|attr| attr.path.is_ident("bit_field")).ok_or_else(|| {
         syn::Error::new(
             Span::call_site(),
