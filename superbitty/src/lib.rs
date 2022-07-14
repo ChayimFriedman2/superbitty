@@ -1,3 +1,5 @@
+#![doc = include_str!("../../README.md")]
+
 #![no_std]
 
 /// A bitfield struct.

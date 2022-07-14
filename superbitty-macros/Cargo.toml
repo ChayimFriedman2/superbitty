@@ -2,6 +2,12 @@
 name = "superbitty-macros"
 version = "0.1.0"
 edition = "2021"
+authors = ["Chayim Refael Friedman"]
+description = "A helper crate to the `bitfields` crate."
+license = "MIT"
+homepage = "https://github.com/ChayimFriedman2/superbitty"
+repository = "https://github.com/ChayimFriedman2/superbitty"
+readme = "../README.md"
 
 [lib]
 proc-macro = true

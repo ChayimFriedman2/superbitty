@@ -2,6 +2,14 @@
 name = "superbitty"
 version = "0.1.0"
 edition = "2021"
+authors = ["Chayim Refael Friedman"]
+description = "A bitfields crate."
+license = "MIT"
+homepage = "https://github.com/ChayimFriedman2/superbitty"
+repository = "https://github.com/ChayimFriedman2/superbitty"
+readme = "../README.md"
+categories = ["no-std"]
+keywords = ["bitfields"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
