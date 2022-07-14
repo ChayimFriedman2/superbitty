@@ -4,16 +4,10 @@ use syn::spanned::Spanned;
 
 use crate::utils::SynErrors;
 
-pub(crate) fn bit_field_compatible(item: TokenStream) -> syn::Result<TokenStream> {
-    let item = syn::parse2::<syn::DeriveInput>(item)?;
+pub(crate) fn enum_bitfield(item: syn::DeriveInput) -> Result<TokenStream, syn::Error> {
     let enum_ = match &item.data {
         syn::Data::Enum(enum_) => enum_,
-        _ => {
-            return Err(syn::Error::new_spanned(
-                &item,
-                "only enums can `#[derive(BitFieldCompatible)]`",
-            ))
-        }
+        _ => unreachable!(),
     };
 
     if enum_.variants.is_empty() {
@@ -22,7 +16,6 @@ pub(crate) fn bit_field_compatible(item: TokenStream) -> syn::Result<TokenStream
             "uninhabited enums (with no variants) cannot be `BitFieldCompatible`",
         ));
     }
-
     let discriminants_mask = discriminants_mask(&enum_.variants)?;
     let shift = if discriminants_mask == 0 {
         0 // Using 128 will panic in debug mode.
@@ -34,9 +27,7 @@ pub(crate) fn bit_field_compatible(item: TokenStream) -> syn::Result<TokenStream
     } else {
         u128::BITS - discriminants_mask.trailing_zeros() - discriminants_mask.leading_zeros()
     };
-
     let from_raw = from_raw(&item.ident, enum_.variants.iter().map(|variant| &variant.ident));
-
     let type_name = &item.ident;
     let (impl_generics, type_generics, where_clause) = item.generics.split_for_impl();
     let result = quote! {
@@ -63,7 +54,7 @@ pub(crate) fn bit_field_compatible(item: TokenStream) -> syn::Result<TokenStream
     Ok(result)
 }
 
-fn from_raw<'a>(
+pub(crate) fn from_raw<'a>(
     enum_name: &syn::Ident,
     variants: impl Iterator<Item = &'a syn::Ident> + Clone,
 ) -> TokenStream {
@@ -92,7 +83,7 @@ fn from_raw<'a>(
     }
 }
 
-fn discriminants_mask(
+pub(crate) fn discriminants_mask(
     variants: &syn::punctuated::Punctuated<syn::Variant, syn::token::Comma>,
 ) -> syn::Result<u128> {
     // We cannot start with zero as it will always be less than any other value.
@@ -129,7 +120,7 @@ fn discriminants_mask(
     Ok(discriminants_mask)
 }
 
-fn discriminant_value_or_err(discriminant: &syn::Expr) -> syn::Result<u128> {
+pub(crate) fn discriminant_value_or_err(discriminant: &syn::Expr) -> syn::Result<u128> {
     let span = discriminant.span();
     let (discriminant, is_negative) = discriminant_value(discriminant)?;
     if is_negative {
@@ -147,7 +138,7 @@ fn discriminant_value_or_err(discriminant: &syn::Expr) -> syn::Result<u128> {
     Ok(discriminant)
 }
 
-fn discriminant_value(discriminant: &syn::Expr) -> syn::Result<(Option<u128>, bool)> {
+pub(crate) fn discriminant_value(discriminant: &syn::Expr) -> syn::Result<(Option<u128>, bool)> {
     fn numeric_value(expr: &syn::Expr) -> syn::Result<Option<(u128, bool)>> {
         if let syn::Expr::Lit(syn::ExprLit { lit: syn::Lit::Int(lit), .. }) = expr {
             let mut digits = lit.base10_digits();
