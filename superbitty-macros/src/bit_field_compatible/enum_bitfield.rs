@@ -10,12 +10,6 @@ pub(crate) fn enum_bitfield(item: syn::DeriveInput) -> syn::Result<TokenStream> 
         _ => unreachable!(),
     };
 
-    if enum_.variants.is_empty() {
-        return Err(syn::Error::new_spanned(
-            &item,
-            "uninhabited enums (with no variants) cannot be `BitFieldCompatible`",
-        ));
-    }
     let discriminants_mask = discriminants_mask(&enum_.variants)?;
     let shift = if discriminants_mask == 0 {
         0 // Using 128 will panic in debug mode.
@@ -31,14 +25,10 @@ pub(crate) fn enum_bitfield(item: syn::DeriveInput) -> syn::Result<TokenStream> 
     let type_name = &item.ident;
     let (impl_generics, type_generics, where_clause) = item.generics.split_for_impl();
     let result = quote! {
-        // SAFETY:
-        //  - We checked that no variant carries payload or has negative discriminant.
-        //  - We checked that the enum is inhabited (since they do no carry payload,
-        //    the only way to be uninhabited is to have no variants, and we checked that
-        //    the enum has variants).
-        //  - The values of `SHIFT` and `BITS_LEN` are calculated correctly
-        //    (hopefully?).
-        //  - `into_raw()` is returning the value of an existing variant by an `as` cast.
+        // SAFETY: The trailing/leading zeros are ensured to be correct - that is, not relevant,
+        // and stripping them is nothing. Thus, this calling `from_raw(MASK(into_raw(v)))` is the
+        // same as calling converting the enum to int and back, and since it carries no payload
+        // this is fine.
         unsafe impl #impl_generics ::superbitty::BitFieldCompatible
             for #type_name #type_generics
         #where_clause

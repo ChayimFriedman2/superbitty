@@ -1,5 +1,0 @@
-error: uninhabited enums (with no variants) cannot be `BitFieldCompatible`
- --> tests/ui/BitFieldCompatible/uninhabited_enum.rs:4:1
-  |
-4 | enum Uninhabited {}
-  | ^^^^^^^^^^^^^^^^^^^

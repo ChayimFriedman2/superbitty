@@ -25,3 +25,15 @@ impl SynErrors {
         }
     }
 }
+
+/// Imprecise because one can shadow the primitives, but let's hope nobody does that :)
+pub(crate) fn is_unsigned_int_primitive(ty: &syn::Type) -> bool {
+    if let syn::Type::Path(syn::TypePath { qself: None, path }) = ty {
+        if let Some(base_ty) = path.get_ident() {
+            if ["u8", "u16", "u32", "u64", "u128", "usize"].contains(&&*base_ty.to_string()) {
+                return true;
+            }
+        }
+    }
+    false
+}

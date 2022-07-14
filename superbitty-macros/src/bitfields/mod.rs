@@ -6,6 +6,7 @@ use quote::{format_ident, quote, quote_spanned};
 use syn::spanned::Spanned;
 
 use self::derives::derives;
+use crate::utils::is_unsigned_int_primitive;
 
 pub(crate) fn bitfields_impl(item: TokenStream) -> syn::Result<TokenStream> {
     let mut item = syn::parse2::<parse::BitfieldsStruct>(item)?;
@@ -166,7 +167,7 @@ fn bitfield_accessors(
         #(#attrs)* // We put the attributes on the getter mainly for documentation comments.
         #[inline]
         #vis fn #field_name(&self) -> #ty {
-            // SAFETY: Since `from_raw` always holds valid instances, and all bitfields are
+            // SAFETY: Since `__unsafe_raw` always holds valid instances, and all bitfields are
             // `Copy`, we can convert the bitfield to its enum soundly.
             unsafe {
                 <#ty as ::superbitty::BitFieldCompatible>::from_raw(
@@ -181,24 +182,16 @@ fn bitfield_accessors(
             let field_in_place =
                 (<#ty as ::superbitty::BitFieldCompatible>::into_raw(value) >> #type_shift)
                     << #bit_offset;
-            // SAFETY: We're only updating one field, and its new value is `into_raw()`ed
-            // a valid enum variant, and we know by preconditions of `BitFieldCompatible`
-            // that `into_raw()` will give the correct discriminant.
+            // SAFETY: We only trim irrelevant bits that by `BitFieldCompatible`'s precondition
+            // should be safe.
             self.__unsafe_raw = (raw_without_field | field_in_place) as #base_ty;
         }
     }
 }
 
 fn verify_base_ty(base_ty: &syn::Type) -> syn::Result<()> {
-    if let syn::Type::Path(syn::TypePath { qself: None, path }) = base_ty {
-        if let Some(base_ty) = path.get_ident() {
-            if ["u8", "u16", "u32", "u64", "u128", "usize"].contains(&&*base_ty.to_string()) {
-                // Technically this is unsound - someone could hide the primitive types
-                // with malicious implementations for the bitwise ops. But let's hope
-                // nobody is shadowing primitive types :)
-                return Ok(());
-            }
-        }
+    if is_unsigned_int_primitive(base_ty) {
+        return Ok(());
     }
 
     return Err(syn::Error::new_spanned(

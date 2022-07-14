@@ -64,11 +64,10 @@ pub use superbitty_macros::BitFieldCompatible;
 ///
 /// # Safety
 ///
-///   - An enum implementing this trait must not carry payload in any of its variants.
-///   - The [`SHIFT`] and [`BITS_LEN`] values must be correct.
-///   - The type must be [inhabited].
-///   - [`into_raw()`] must return a valid value (something you can feed back
-///     to [`from_raw()`]).
+/// `from_raw(into_raw(v) & (((1 << BITS_LEN) - 1) << SHIFT))` must be safe to call.
+/// That is, after masking the trailing/leading zeros from `into_raw` it should still
+/// be safe to call `from_raw()`. For `bitfields!` to be correct it should also
+/// return the original `v`, but that is not a safety requirement.
 ///
 /// [derived]: macro@BitFieldCompatible
 /// [`SHIFT`]: BitFieldCompatible::SHIFT
@@ -94,17 +93,6 @@ pub unsafe trait BitFieldCompatible: Copy {
     /// Note that enums with only one variant may still have this value greater than zero
     /// if the discriminant of this variant is not zero, for example if the discriminant is
     /// `0b11` it needs two bits to be stored.
-    ///
-    /// You can play with this value as long as you keep this rule of thumb: if we call
-    /// [`into_raw()`] and truncate the bits left after applying this value (that is,
-    /// perform the operation `into_raw(v) & (((1 << BITS_LEN) - 1) << SHIFT)`),
-    /// it is okay to call [`from_raw()`] with the resulted value and this will give back
-    /// the original value. The last is not a safety requirement: if the value is different
-    /// no UB will occur but the value you'll get from storing this type in a bitfield may
-    /// be wrong.
-    ///
-    /// [`into_raw()`]: BitFieldCompatible::into_raw
-    /// [`from_raw()`]: BitFieldCompatible::from_raw
     const BITS_LEN: u32;
 
     /// This value must not be overridden! Doing so can cause UB.
