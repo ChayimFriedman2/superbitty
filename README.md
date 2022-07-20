@@ -13,9 +13,17 @@ pub enum Enum {
     D,
 }
 
-#[derive(BitFieldCompatible, Clone, Copy)]
-#[bit_field(size = 6)]
+#[derive(Clone, Copy)]
 pub struct Rest(pub u8);
+
+// SAFETY: We only set this via `Bitfields`, and thus the values are guaranteed
+// to stay in range.
+unsafe impl BitFieldCompatible for Rest {
+    const SHIFT: u32 = 0;
+    const BITS_LEN: u32 = 6;
+    fn into_raw(self) -> u128 { self.0 as u128 }
+    unsafe fn from_raw(v: u128) -> Self { Self(v as u8) }
+}
 
 bitfields! {
     pub struct Bitfields : u8 {
