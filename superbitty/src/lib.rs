@@ -106,21 +106,18 @@ pub use superbitty_macros::bitfields;
 /// ```
 pub use superbitty_macros::BitFieldCompatible;
 
-/// An enum or struct that can be used as a bitfield. This is usually [derived].
+/// An enum or struct that can be used as a bitfield. This is usually [derived] for enums.
+/// Structs and unions can implement this explicitly, as the safety requirements cannot be
+/// guaranteed for them with `#[derive()]` (at least not easily).
 ///
 /// # Safety
 ///
-/// `from_raw(into_raw(v) & (((1 << BITS_LEN) - 1) << SHIFT))` must be safe to call.
-/// That is, after masking the trailing/leading zeros from `into_raw` it should still
-/// be safe to call `from_raw()`. For `bitfields!` to be correct it should also
-/// return the original `v`, but that is not a safety requirement.
+/// [`into_raw()`] must provide a value within the range specified by [`SHIFT`] and [`BITS_LEN`].
 ///
 /// [derived]: macro@BitFieldCompatible
+/// [`into_raw()`]: BitFieldCompatible::into_raw
 /// [`SHIFT`]: BitFieldCompatible::SHIFT
 /// [`BITS_LEN`]: BitFieldCompatible::BITS_LEN
-/// [inhabited]: https://rustc-dev-guide.rust-lang.org/appendix/glossary.html?highlight=uninhabited#glossary
-/// [`into_raw()`]: BitFieldCompatible::into_raw
-/// [`from_raw()`]: BitFieldCompatible::from_raw
 pub unsafe trait BitFieldCompatible: Copy {
     /// The number we need to left-shift with to reach a valid value from a compressed
     /// value which has all trailing zeros trimmed.
