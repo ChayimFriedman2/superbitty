@@ -11,9 +11,17 @@
 //!     D,
 //! }
 //!
-//! #[derive(BitFieldCompatible, Clone, Copy)]
-//! #[bit_field(size = 6)]
+//! #[derive(Clone, Copy)]
 //! pub struct Rest(pub u8);
+//!
+//! // SAFETY: We only set this via `Bitfields`, and thus the values are guaranteed
+//! // to stay in range.
+//! unsafe impl BitFieldCompatible for Rest {
+//!     const SHIFT: u32 = 0;
+//!     const BITS_LEN: u32 = 6;
+//!     fn into_raw(self) -> u128 { self.0 as u128 }
+//!     unsafe fn from_raw(v: u128) -> Self { Self(v as u8) }
+//! }
 //!
 //! bitfields! {
 //!     pub struct Bitfields : u8 {
@@ -79,34 +87,20 @@
 /// [`Debug`]: core::fmt::Debug
 /// [`Hash`]: core::hash::Hash
 pub use superbitty_macros::bitfields;
-/// An enum or struct that can be used as a bitfield.
+/// An enum that can be used as a bitfield.
 ///
 /// It must be [`Copy`].
 ///
-/// For enums, it must carry no payload and have no negative discriminants.
+/// It must carry no payload and have no negative discriminants.
 ///
 /// ```
 /// # use superbitty::BitFieldCompatible;
 /// #[derive(BitFieldCompatible, Clone, Copy)]
 /// enum BitFieldCompatibleEnum { A, B, C }
 /// ```
-///
-/// For structs, it must have only one field with an unsigned primitive integer
-/// (`u8`, `u16`, `u32`, `u64`, `u128` or `usize`), and be annotated with a
-/// `#[bit_field(size = …, [offset = …])]` attribute. `size` is mandatory and
-/// should be an integer describing the number of bits this struct occupies;
-/// `offset` is optional and denotes the rightmost bit (Least Significant Bit)
-/// at where it starts counting. For example the following struct can hold the
-/// values `0b000`, `0b010`, `0b100` and `0b110`:
-/// ```
-/// # use superbitty::BitFieldCompatible;
-/// #[derive(BitFieldCompatible, Clone, Copy)]
-/// #[bit_field(size = 2, offset = 1)]
-/// struct TwoBits(u8);
-/// ```
 pub use superbitty_macros::BitFieldCompatible;
 
-/// An enum or struct that can be used as a bitfield. This is usually [derived] for enums.
+/// A type that can be used as a bitfield. This is usually [derived] for enums.
 /// Structs and unions can implement this explicitly, as the safety requirements cannot be
 /// guaranteed for them with `#[derive()]` (at least not easily).
 ///

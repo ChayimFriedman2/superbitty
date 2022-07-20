@@ -1,5 +1,5 @@
 error: complex expressions in the discriminant are not supported with `BitFieldCompatible` (only integers)
- --> tests/ui/BitFieldCompatible/enums/complex_discriminant.rs:9:9
+ --> tests/ui/BitFieldCompatible/complex_discriminant.rs:9:9
   |
 9 |     A = foo(),
   |         ^^^^^

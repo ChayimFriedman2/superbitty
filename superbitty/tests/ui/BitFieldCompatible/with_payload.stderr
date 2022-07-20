@@ -1,11 +1,11 @@
 error: cannot have payload with `BitFieldCompatible`
- --> tests/ui/BitFieldCompatible/enums/with_payload.rs:5:6
+ --> tests/ui/BitFieldCompatible/with_payload.rs:5:6
   |
 5 |     A(()),
   |      ^^^^
 
 error: cannot have payload with `BitFieldCompatible`
- --> tests/ui/BitFieldCompatible/enums/with_payload.rs:7:7
+ --> tests/ui/BitFieldCompatible/with_payload.rs:7:7
   |
 7 |     C { value: i32 },
   |       ^^^^^^^^^^^^^^

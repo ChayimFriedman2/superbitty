@@ -1,5 +1,0 @@
-error: the `size` option is mandatory
- --> tests/ui/BitFieldCompatible/structs/no_size_option.rs:4:1
-  |
-4 | #[bit_field()]
-  | ^^^^^^^^^^^^^^

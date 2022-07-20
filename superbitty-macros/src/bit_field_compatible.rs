@@ -4,10 +4,14 @@ use syn::spanned::Spanned;
 
 use crate::utils::SynErrors;
 
-pub(crate) fn enum_bitfield(item: syn::DeriveInput) -> syn::Result<TokenStream> {
+pub(crate) fn bit_field_compatible(item: TokenStream) -> syn::Result<TokenStream> {
+    let item = syn::parse2::<syn::DeriveInput>(item)?;
     let enum_ = match &item.data {
         syn::Data::Enum(enum_) => enum_,
-        _ => unreachable!(),
+        syn::Data::Struct(_) | syn::Data::Union(_) => return Err(syn::Error::new_spanned(
+            &item,
+            "structs and unions cannot `#[derive(BitFieldCompatible)]` and must implement it themselves",
+        )),
     };
 
     let discriminants_mask = discriminants_mask(&enum_.variants)?;
@@ -25,10 +29,7 @@ pub(crate) fn enum_bitfield(item: syn::DeriveInput) -> syn::Result<TokenStream> 
     let type_name = &item.ident;
     let (impl_generics, type_generics, where_clause) = item.generics.split_for_impl();
     let result = quote! {
-        // SAFETY: The trailing/leading zeros are ensured to be correct - that is, not relevant,
-        // and stripping them is nothing. Thus, this calling `from_raw(MASK(into_raw(v)))` is the
-        // same as calling converting the enum to int and back, and since it carries no payload
-        // this is fine.
+        // SAFETY: `into_raw()` is just `as`, and we ensured `SHIFT` and `BITS_LEN` are correct.
         unsafe impl #impl_generics ::superbitty::BitFieldCompatible
             for #type_name #type_generics
         #where_clause

@@ -1,6 +1,9 @@
 use superbitty::BitFieldCompatible;
 
 #[derive(BitFieldCompatible)]
-union Bar {}
+struct Foo {}
+
+#[derive(BitFieldCompatible)]
+union Bar { _v: () }
 
 fn main() {}

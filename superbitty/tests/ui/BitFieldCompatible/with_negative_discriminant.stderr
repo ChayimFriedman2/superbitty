@@ -1,5 +1,5 @@
 error: negative discriminants are not supported with `BitFieldCompatible`
- --> tests/ui/BitFieldCompatible/enums/with_negative_discriminant.rs:5:9
+ --> tests/ui/BitFieldCompatible/with_negative_discriminant.rs:5:9
   |
 5 |     A = -1,
   |         ^^
