@@ -1,11 +1,11 @@
 error: unsupported base type for `bitfields!`: only primitive unsigned types are supported
- --> tests/ui/bitfields/invalid_base_ty.rs:4:29
+ --> $DIR/invalid_base_ty.rs:4:29
   |
 4 |     struct NegativeBaseTy : isize {}
   |                             ^^^^^
 
 error: unsupported base type for `bitfields!`: only primitive unsigned types are supported
- --> tests/ui/bitfields/invalid_base_ty.rs:8:26
+ --> $DIR/invalid_base_ty.rs:8:26
   |
 8 |     struct OtherBaseTy : Option<String> {}
   |                          ^^^^^^^^^^^^^^

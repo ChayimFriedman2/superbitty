@@ -1,5 +1,5 @@
 error[E0080]: evaluation of constant value failed
-  --> tests/ui/bitfields/too_big_size.rs:21:1
+  --> $DIR/too_big_size.rs:21:1
    |
 21 | / bitfields! {
 22 | |     struct TooBigSize : u8 {

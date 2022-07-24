@@ -1,11 +1,11 @@
 error: structs and unions cannot `#[derive(BitFieldCompatible)]` and must implement it themselves
- --> tests/ui/BitFieldCompatible/structs_and_unions.rs:4:1
+ --> $DIR/structs_and_unions.rs:4:1
   |
 4 | struct Foo {}
   | ^^^^^^^^^^^^^
 
 error: structs and unions cannot `#[derive(BitFieldCompatible)]` and must implement it themselves
- --> tests/ui/BitFieldCompatible/structs_and_unions.rs:7:1
+ --> $DIR/structs_and_unions.rs:7:1
   |
 7 | union Bar { _v: () }
   | ^^^^^^^^^^^^^^^^^^^^
