@@ -39,6 +39,8 @@
 //! ```
 
 #![no_std]
+#![forbid(unsafe_op_in_unsafe_fn, rust_2018_idioms)]
+#![warn(missing_docs)]
 
 /// A bitfield struct.
 ///

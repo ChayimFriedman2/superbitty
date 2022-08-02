@@ -20,7 +20,7 @@ pub(super) struct BitfieldsStruct {
 }
 
 impl Parse for BitfieldsStruct {
-    fn parse(input: ParseStream) -> Result<Self> {
+    fn parse(input: ParseStream<'_>) -> Result<Self> {
         let attrs = input.call(Attribute::parse_outer)?;
         let vis = input.parse()?;
         let struct_token = input.parse()?;
@@ -67,7 +67,7 @@ pub(super) struct BitfieldsStructFields {
 }
 
 impl Parse for BitfieldsStructFields {
-    fn parse(input: ParseStream) -> Result<Self> {
+    fn parse(input: ParseStream<'_>) -> Result<Self> {
         let content;
         braced!(content in input);
         Ok(Self { fields: content.parse_terminated(BitfieldsStructField::parse)? })
@@ -82,7 +82,7 @@ pub(super) struct BitfieldsStructField {
 }
 
 impl Parse for BitfieldsStructField {
-    fn parse(input: ParseStream) -> Result<Self> {
+    fn parse(input: ParseStream<'_>) -> Result<Self> {
         let attrs = input.call(Attribute::parse_outer)?;
         let vis = input.parse()?;
         let ident = input.parse()?;

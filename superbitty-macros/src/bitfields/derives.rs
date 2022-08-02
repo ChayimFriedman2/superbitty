@@ -192,7 +192,7 @@ type DeriveList = syn::punctuated::Punctuated<syn::Path, syn::Token![,]>;
 /// and brackets, while we want only parentheses.
 ///
 /// [`parse_args_with()`]: syn::Attribute::parse_args_with
-fn parse_derive_list(input: syn::parse::ParseStream) -> syn::Result<DeriveList> {
+fn parse_derive_list(input: syn::parse::ParseStream<'_>) -> syn::Result<DeriveList> {
     let content;
     syn::parenthesized!(content in input);
     DeriveList::parse_terminated(&content)

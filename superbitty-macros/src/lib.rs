@@ -1,3 +1,5 @@
+#![forbid(unsafe_code, rust_2018_idioms)]
+
 mod bit_field_compatible;
 mod bitfields;
 mod utils;
