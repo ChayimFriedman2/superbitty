@@ -6,10 +6,12 @@ use quote::{format_ident, quote, quote_spanned};
 use syn::spanned::Spanned;
 
 use self::derives::derives;
-use crate::utils::is_unsigned_int_primitive;
+use crate::utils::{is_unsigned_int_primitive, SynErrors};
 
 pub(crate) fn bitfields_impl(item: TokenStream) -> syn::Result<TokenStream> {
     let mut item = syn::parse2::<parse::BitfieldsStruct>(item)?;
+
+    disallow_invalid_attributes(&item.attrs)?;
 
     let (struct_attrs, derives) = derives(item.attrs.drain(..))?;
 
@@ -68,6 +70,22 @@ pub(crate) fn bitfields_impl(item: TokenStream) -> syn::Result<TokenStream> {
         }
     };
     Ok(result)
+}
+
+/// Proc macros can cause unsoundness - they can replace the inner representation with some evil
+/// type that implements the bitwise operators incorrectly, causing us to create invalid instances
+/// of types such as enums. Because of that we disallow them here.
+fn disallow_invalid_attributes(attrs: &[syn::Attribute]) -> syn::Result<()> {
+    let mut errors = SynErrors::default();
+    for attr in attrs {
+        if !attr.path.is_ident("doc") && !attr.path.is_ident("derive") {
+            errors.push(syn::Error::new_spanned(
+                attr,
+                "only doc comments and `#[derive(…)]` are allowed with `bitfields!`",
+            ));
+        }
+    }
+    errors.into_result()
 }
 
 struct Bitfield {
