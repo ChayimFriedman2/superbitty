@@ -47,14 +47,11 @@ pub(crate) fn bitfields_impl(item: TokenStream) -> syn::Result<TokenStream> {
     let (impl_generics, type_generics, where_clause) = item.generics.split_for_impl();
     let result = quote! {
         #(#struct_attrs)*
-        #struct_vis #struct_kw #struct_name #generics #where_clause {
-            // Technically unsound as people can mess with this field in unexpected
-            // ways, but let's hope the `#[doc(hidden)]`, the double underscores and
-            // the `unsafe` in the name are a good enough warning.
-            #[doc(hidden)]
+        #struct_vis #struct_kw #struct_name #generics(
             // Invariant: Always holds valid instances of the bit fields.
-            __unsafe_raw: #base_ty,
-        }
+            ::superbitty::Raw<#base_ty>,
+        )
+            #where_clause;
 
         #assert_bitfields_compatible
         #assert_bitfields_size
@@ -156,12 +153,12 @@ fn new_method(
     );
     quote! {
         #method_vis fn #method_name( #( #args, )* ) -> Self {
-            Self {
+            Self(
                 // SAFETY: We're combining valid values from `into_raw()` that by
                 // `BitFieldCompatible`'s preconditions guaranteed to return valid
                 // discriminants.
-                __unsafe_raw: ( 0 #( | #fields_calculation )* ) as #base_ty,
-            }
+                unsafe { ::superbitty::Raw::new(( 0 #( | #fields_calculation )* ) as #base_ty) },
+            )
         }
     }
 }
@@ -177,7 +174,8 @@ fn bitfield_accessors(
     base_ty: &syn::Type,
 ) -> TokenStream {
     let setter_name = format_ident!("set_{field_name}");
-    let mut getter_stripped_field = quote! { ((self.__unsafe_raw as u128) >> #bit_offset) };
+    let mut getter_stripped_field =
+        quote! { ((::superbitty::Raw::raw(self.0) as u128) >> #bit_offset) };
     if !is_last {
         getter_stripped_field = quote! { (#getter_stripped_field & #bits_mask) }
     }
@@ -185,7 +183,7 @@ fn bitfield_accessors(
         #(#attrs)* // We put the attributes on the getter mainly for documentation comments.
         #[inline]
         #vis fn #field_name(&self) -> #ty {
-            // SAFETY: Since `__unsafe_raw` always holds valid instances, and all bitfields are
+            // SAFETY: Since `self.0` always holds valid instances, and all bitfields are
             // `Copy`, we can convert the bitfield to its enum soundly.
             unsafe {
                 <#ty as ::superbitty::BitFieldCompatible>::from_raw(
@@ -196,18 +194,20 @@ fn bitfield_accessors(
 
         #[inline]
         #vis fn #setter_name(&mut self, value: #ty) {
-            let raw_without_field = (self.__unsafe_raw as u128) & !(#bits_mask << #bit_offset);
+            let raw_without_field = (::superbitty::Raw::raw(self.0) as u128) & !(#bits_mask << #bit_offset);
             let field_in_place =
                 (<#ty as ::superbitty::BitFieldCompatible>::into_raw(value) >> #type_shift)
                     << #bit_offset;
             // SAFETY: We only trim irrelevant bits that by `BitFieldCompatible`'s precondition
             // should be safe.
-            self.__unsafe_raw = (raw_without_field | field_in_place) as #base_ty;
+            *unsafe { ::superbitty::Raw::get_mut(&mut self.0) } =
+                (raw_without_field | field_in_place) as #base_ty;
         }
     }
 }
 
 fn verify_base_ty(base_ty: &syn::Type) -> syn::Result<()> {
+    // We can leave that out because `Raw` will validate that but this gives better error message.
     if is_unsigned_int_primitive(base_ty) {
         return Ok(());
     }

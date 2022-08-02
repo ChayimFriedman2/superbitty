@@ -42,6 +42,8 @@
 #![forbid(unsafe_op_in_unsafe_fn, rust_2018_idioms)]
 #![warn(missing_docs)]
 
+mod raw;
+
 /// A bitfield struct.
 ///
 /// All fields must implement [`BitFieldCompatible`] and their ranges must be non-overlapping
@@ -85,9 +87,29 @@
 /// }
 /// ```
 ///
+/// The base type is stored as [`Raw`] in a (private) tuple field `0`. You can call its
+/// [`raw()`] method to get the raw bitfields data (but you cannot modify it):
+/// ```rust
+/// # use superbitty::{bitfields, BitFieldCompatible};
+/// #[derive(BitFieldCompatible, Clone, Copy)]
+/// enum Enum { A, B }
+///
+/// bitfields! {
+///     pub struct Bitfields : u8 {
+///         a: Enum,
+///         b: Enum,
+///         c: Enum,
+///     }
+/// }
+///
+/// let mut instance = Bitfields::new(Enum::B, Enum::A, Enum::B);
+/// assert_eq!(instance.0.raw(), 0b101); // `Enum::B` is 1, `Enum::A` is 0.
+/// ```
+///
 /// [`BitFieldCompatible`]: crate::BitFieldCompatible
 /// [`Debug`]: core::fmt::Debug
 /// [`Hash`]: core::hash::Hash
+/// [`raw()`]: Raw::raw
 pub use superbitty_macros::bitfields;
 /// An enum that can be used as a bitfield.
 ///
@@ -101,6 +123,8 @@ pub use superbitty_macros::bitfields;
 /// enum BitFieldCompatibleEnum { A, B, C }
 /// ```
 pub use superbitty_macros::BitFieldCompatible;
+
+pub use crate::raw::Raw;
 
 /// A type that can be used as a bitfield. This is usually [derived] for enums.
 /// Structs and unions can implement this explicitly, as the safety requirements cannot be

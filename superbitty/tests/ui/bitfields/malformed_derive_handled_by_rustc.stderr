@@ -20,3 +20,18 @@ help: the delimiters should be `(` and `)`
   |
 9 |     #[derive(Debug)]
   |             ~     ~
+
+error[E0277]: `Raw<u8>` doesn't implement `Debug`
+  --> $DIR/malformed_derive_handled_by_rustc.rs:6:1
+   |
+6  | / bitfields! {
+7  | |     #[derive]
+8  | |     #[derive = ""]
+9  | |     #[derive[Debug]]
+   | |              ----- in this derive macro expansion
+10 | |     struct WithMalformedDerive : u8 {}
+11 | | }
+   | |_^ `Raw<u8>` cannot be formatted using `{:?}` because it doesn't implement `Debug`
+   |
+   = help: the trait `Debug` is not implemented for `Raw<u8>`
+   = note: this error originates in the derive macro `Debug` (in Nightly builds, run with -Z macro-backtrace for more info)

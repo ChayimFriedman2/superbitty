@@ -61,7 +61,7 @@ mod derive_fns {
                     // so are we.
                     // We actually do a `Copy` and not `Clone`, but `Copy` is a
                     // supertrait of `BitFieldCompatible` so this is fine.
-                    Self { __unsafe_raw: self.__unsafe_raw }
+                    Self(self.0)
                 }
             }
         }
