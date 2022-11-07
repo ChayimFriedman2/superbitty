@@ -193,6 +193,7 @@ fn bitfield_accessors(
         }
 
         #[inline]
+        #[allow(dead_code)] // User may use the constructor and getters only.
         #vis fn #setter_name(&mut self, value: #ty) {
             let raw_without_field = (::superbitty::Raw::raw(self.0) as u128) & !(#bits_mask << #bit_offset);
             let field_in_place =
